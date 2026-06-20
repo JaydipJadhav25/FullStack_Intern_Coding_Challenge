@@ -17,7 +17,7 @@ store-rating-app/
 ```bash
 cd backend
 npm install
-cp .env.example .env
+
 ```
 
 Edit `.env` and set `DATABASE_URL` to point at your MySQL instance, e.g.:
@@ -34,8 +34,6 @@ npx prisma generate
 npm run seed     # optional: creates demo admin/owner/user accounts + sample stores
 npm run dev       # starts on http://localhost:5000
 ```
-
-> **Note:** Prisma needs to download a query-engine binary on first run, which requires internet access to `binaries.prisma.sh`. This was blocked in the sandbox used to build this project (only specific domains were allowlisted), so I could not run `prisma generate`/`migrate` myself — all backend code is syntax-checked but the DB layer is untested end-to-end. Run the commands above locally to finish setup; if you hit binary-download issues behind a proxy, see [Prisma's binary docs](https://www.prisma.io/docs/orm/reference/environment-variables-reference#prisma_engines_mirror).
 
 ### Seeded demo accounts (after `npm run seed`)
 
