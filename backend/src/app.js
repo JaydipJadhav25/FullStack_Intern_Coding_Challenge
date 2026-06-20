@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('../swagger');
+
+
+
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -19,6 +24,11 @@ app.use(
 //setup middlewaer
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
+
+
+// Serve Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);

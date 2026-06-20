@@ -14,7 +14,9 @@ const ROLE_BADGE = {
 const emptyForm = { name: '', email: '', address: '', password: '', role: 'USER' };
 
 function validateForm(form) {
+
   const errors = {};
+  
   if (form.name.trim().length < 20 || form.name.trim().length > 60) {
     errors.name = 'Name must be 20-60 characters';
   }
@@ -75,7 +77,7 @@ export default function AdminUsers() {
   function handleSort(field) {
     if (sortBy === field) {
       setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-      
+
     } else {
       setSortBy(field);
       setSortOrder('asc');
