@@ -1,0 +1,67 @@
+// Prisma schema for the Store Rating App
+// Run `npx prisma migrate dev --name init` after configuring DATABASE_URL in .env
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+  STORE_OWNER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(60)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  address   String   @db.VarChar(400)
+  role      Role     @default(USER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // A USER can submit many ratings
+  ratings Rating[]
+
+  // A STORE_OWNER owns one store (kept as a list for flexibility, but UI/logic enforces 1)
+  stores Store[]
+
+  @@map("users")
+}
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(60)
+  email     String   @db.VarChar(255)
+  address   String   @db.VarChar(400)
+  ownerId   Int?     @map("owner_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  owner   User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  ratings Rating[]
+
+  @@map("stores")
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  storeId   Int      @map("store_id")
+  rating    Int      @db.TinyInt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  // One user can rate one store only once (update allowed via PUT)
+  @@unique([userId, storeId])
+  @@map("ratings")
+}
