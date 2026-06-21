@@ -71,26 +71,3 @@ npm run dev             # starts on http://localhost:5173
 | Owner | `GET /api/owner/dashboard`              | Store Owner        |
 | Owner | `GET /api/owner/ratings`                | Store Owner        |
 
-Query params for `/api/admin/users`: `search`, `role`, `sortBy` (name/email/address/role), `sortOrder` (asc/desc).
-Query params for `/api/admin/stores` and `/api/stores`: `search`, `sortBy` (name/email/address/rating), `sortOrder`.
-
-## Validation Rules (enforced both client- and server-side)
-
-- **Name:** 20–60 characters
-- **Address:** required, max 400 characters
-- **Password:** 8–16 characters, at least 1 uppercase letter, at least 1 special character
-- **Email:** standard email format
-- **Rating:** integer 1–5, one rating per user per store (subsequent submissions use `PUT` to update)
-
-## Database Notes
-
-- `users.role` is an enum: `ADMIN`, `USER`, `STORE_OWNER`.
-- `ratings` has a unique constraint on `(user_id, store_id)` — enforced at the DB level via Prisma's `@@unique`.
-- The `rating BETWEEN 1 AND 5` constraint is enforced via `express-validator` on every write; Prisma doesn't support native CHECK constraints in the schema file, so if you want DB-level enforcement too, add a raw SQL migration with `ALTER TABLE ratings ADD CONSTRAINT chk_rating CHECK (rating BETWEEN 1 AND 5);`.
-
-## What's Left for You
-
-1. Run the Prisma migration locally (couldn't be verified in this sandbox — see note above).
-2. Consider adding pagination to the admin users/stores tables if your dataset grows large (currently unpaginated).
-3. Tighten CORS_ORIGIN in `.env` for production.
-4. Swap the JWT_SECRET for a real secret before deploying.
